@@ -1,0 +1,43 @@
+DB Mockup
+'The Computer Gaming Society has a collection of CDs, DVDs and cartridges containing computer games for a range of platforms, including current and older gaming consoles.'
+- Added a Game table.
+- Added a field PLATFORM of enum type CONSOLE (string in image) to Game. 
+- Added a field NAME of varchar(255) to Game.
+- Added a field GAMEID AUTO_INCREMENT PK of type int to Game that helps distinguish between two games of the same name on different platforms.
+
+They rent these games to members of the society for a limited period (currently up to 3 weeks).
+- Added a Rental table.
+- Added a Member table.
+- Added a field MEMBERID AUTO_INCREMENT PK of type int to Member.
+- Added a field MEMBERID PK FK of type int to Rental.
+- Added a field GAMEID PK FK UNIQUE of type int to Rental. Unique because no two members should be able to rent the same game at the same time.
+- Added a field START of type datetime to Rental. Not sure if datetime is necessary if there are no plans for shorterm loans (Same day/next day rentals).
+- Added a field DUE of type datetime to Rental. This should probably be a stored generated column. Calculating the due date when a new Rental is inserted into the table or updated (will also have to use a Rental_Period variable set at 3 weeks).
+
+Members can only be renting a limited number of games at any one time (currently 2).
+- Perhaps use a trigger for this to check when inserting a new rental whether or not a given MEMBERID appears more than twice (variable) in the Rental table.
+
+Members can ask for a limited number of 1-week extensions (currently no more than two 1-week extensions are allowed).
+- Added Extention table.
+- Added a field MEMBERID PK FK of type int to Extention.
+- Added a field GAMEID PK FK of type int to Extention. The idea here I think is that requesting an extention both updates the Rental (DUE) and inserts the PK of said Rental into a new Extention table. So that we can keep track of the number of extentions in the same way as above. When a Rental has been returned and the record can be deleted the Extention can also be cascade deleted.
+
+Members who violate these rules and do not return games on time repeatedly (currently, on three occasions within a 12 month period), will be banned from renting games for a fixed period (currently 6 months).
+- Less sure about this one.
+- Added Violation table.
+- Added a field GAMEID PK FK of type int to Violation.
+- Added a field MEMBERID PK FK of type int to Violation.
+- Added a field VIOLATIONDATE FK of type datetime to Violation. The thought process here is to allow for there to be a system such that whenever a Rental for a given MEMBER + GAME goes over its DUE date. Add this MEMBER and GAME to the violation table (so that you know what game is missing and who has it), and add its due date as the violation date. Violations can be removd from the table 12 months (variable) after the violation date and you can check the violation table for three (variable) or more instances of a memberid to determine whether a member should be banned or not.
+- Added a field BANNED of type boolean into Member.
+
+Members are expected to take good care of the games they are renting. If a game is returned damaged (e.g. a CD/DVD is scratched and no longer readable), the member is expected to refund the value of the game to the society and will not be allowed to rent games until they do so.
+- Added a field BALANCE DEFAULT 0 of type float to Member. Should keep track of outstanding balances for damaged items.
+- Added a field VALUE of type float to Game. i.e. price.
+- No idea how to implement the return damage checking. Temporarily added:
+- Field RETURNDATE of type datetime to Rental. With the idea being that Rental records stay open until Games are returned.
+- Field GOODCONDITION of type boolean to Rental.
+- Field DAMAGED of type boolean to Game.
+
+Ideally, there would be some ways of browsing or searching for games (e.g. by platform, type of game, release year, title, etc.), add detailed descriptions and some artwork for games, and link in ratings by reputable computer game review magazines.
+- I assume this will just be extra fields added to the Game table. Have left out for now. 
+
