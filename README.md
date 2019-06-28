@@ -3,6 +3,8 @@
 **Heroku Web Application URL:http://seg-lab2018-kobe.dx.am/public/**:   
 **Team Name:** Kobe  
 
+## Duration: 5 weeks (First semester at Undergraduate Second Year)
+
 **Team Members:**   
 Alessandro Amantini  
 Wei Chew  
